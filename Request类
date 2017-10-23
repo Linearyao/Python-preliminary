@@ -1,0 +1,88 @@
+#coding:utf-8
+'''
+Request.py
+'''
+
+import copy
+from URL import URL
+
+class Request:
+    def __init__(self,url,method='GET',headers=None,cookies=None,referer=None,data=None,**kwargs):
+        if isinstance(url,URL):
+            self._url = url
+        else:
+            self._url = URL(url)
+        self._method = method.upper()
+        self._headers = {}
+        self._cookies = cookies
+        self._referer = referer
+        #self._user_agent = user_agent
+        if self._cookies:
+            headers.update({"Cookie": self._cookies})
+        if self._referer:
+            headers.update({"Referer": self._referer})
+        if self._user_agent:
+            self._headers.update({"User_agent": self._user_agent})
+        self._get_data = self._url.get_querystring()
+        if data:
+            self._post_data = data
+    def get_get_param(self):
+        '''
+        '''
+        return self._get_data
+    def get_post_param(self):
+        '''
+        '''
+        return self._post_data
+    def get_url(self):
+        '''
+        '''
+        return self._url
+    def get_method(self):
+        '''
+        '''
+        return self._method
+    def get_headers(self):
+        '''
+        '''
+        return self._headers
+    def get_cookies(self):
+        '''
+        '''
+        return self._cookies
+    def set_post_data(self):
+        '''
+        '''
+        self._post_data
+    def set_get_data(self,postdata):
+        '''
+        '''
+        post_data = postdata
+    def set_referer(self,referer):
+        '''
+        '''
+        self._referer = referer
+    def set_cookies(self,cookies):
+        '''
+        '''
+        self._cookies = cookies
+    def __str__(self):
+        '''
+        '''
+        result_string = self._method
+        result_string +=" "+self._url.url_string + " HTTP/1.1\r\n"
+        headers = copy.deepcopy(self._headers)
+        headers.update({"Host":self._url.get_host()})
+        for key,value in headers.iteritems():
+            result_string +=key+":"+value
+            result_string +="\r\n"
+        result_string +="\r\n"
+        if self._method=="POST":
+            result_string +=str(self._post_data)
+        result_string = result_string.encode("utf-8")
+        return result_string
+    def __repr__(self):
+        '''
+        '''
+        vals = {'method':self.get_method(),'url':str(self.get_url()),'id':self.get_id()}
+        return '<Request | %(method)s | %(url)s | %(id)s>' % vals
